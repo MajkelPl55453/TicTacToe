@@ -11,6 +11,9 @@ public class GameController : MonoBehaviour {
     public Sprite[] playerIcons; //0 = X; 1 = O;
     public Button[] tictactoeSpaces; //klikalne pola w grze
     public int[] markedSpaces; // id pól klikniętych przez konkretnego gracza
+    public Text winnerText; // Trzyma komponent tekstu dla wygranego gracza
+    public GameObject[] winningLines; // przetrzymuje linie dla wygrania
+    public GameObject winnerPanel;
 
 	// Use this for initialization
 	void Start () {
@@ -80,9 +83,24 @@ public class GameController : MonoBehaviour {
             //Sprawdzenie czy ktoś wygrał
             if (solutions[i] == 3 * (whoseTurn + 1))
             {
-
+                WinnderDisplay(i);
+                return;
             }
         }
+    }
+
+    void WinnderDisplay(int indexIn) {
+        winnerPanel.gameObject.SetActive(true);
+        winnerText.gameObject.SetActive(true);
+        if (whoseTurn == 0)
+        {
+            winnerText.text = "Gracz X wygrał!";
+        }
+        else if(whoseTurn == 1)
+        {
+            winnerText.text = "Gracz O wygrał";
+        }
+        winningLines[indexIn].SetActive(true);
     }
 
 	// Update is called once per frame
