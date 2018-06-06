@@ -20,6 +20,9 @@ public class GameController : MonoBehaviour {
     public Text oPlayersScoreText; // pole tekstowe z punktami dla gracza o
     public GameObject rematchButton; // przycisk od ponownej rozgrywki gry
     public GameObject restartButton; // przycisk od restartu gry
+    public Button xPlayersButton; // przycisk x
+    public Button oPlayersButton; // przycisk o
+    public int lastWinner; // id ostatniego zwyciężcy
 
     // Use this for initialization
     void Start () {
@@ -43,6 +46,8 @@ public class GameController : MonoBehaviour {
     }
 
     public void TicTacToeButton(int whichNumber){
+        xPlayersButton.interactable = false;
+        oPlayersButton.interactable = false;
         tictactoeSpaces[whichNumber].image.sprite = playerIcons[whoseTurn];
         tictactoeSpaces[whichNumber].interactable = false;
 
@@ -96,6 +101,7 @@ public class GameController : MonoBehaviour {
     }
 
     void WinnderDisplay(int indexIn) {
+        lastWinner = whoseTurn;
         winnerPanel.gameObject.SetActive(true);
         winnerText.gameObject.SetActive(true);
         if (whoseTurn == 0)
@@ -103,12 +109,14 @@ public class GameController : MonoBehaviour {
             xPlayerScore++;
             xPlayersScoreText.text = xPlayerScore.ToString();
             winnerText.text = "Gracz X wygrał!";
+            switchPlayer(1);
         }
         else if(whoseTurn == 1)
         {
             oPlayerScore++;
             oPlayersScoreText.text = oPlayerScore.ToString();
             winnerText.text = "Gracz O wygrał";
+            switchPlayer(0);
         }
         winningLines[indexIn].SetActive(true);
         rematchButton.SetActive(true);
@@ -123,6 +131,17 @@ public class GameController : MonoBehaviour {
         }
         winnerPanel.SetActive(false);
         rematchButton.SetActive(false);
+        xPlayersButton.interactable = true;
+        oPlayersButton.interactable = true;
+
+        if (lastWinner == 0)
+        {
+            switchPlayer(1);
+        }
+        else if (lastWinner == 1)
+        {
+            switchPlayer(0);
+        }
     }
 
     public void Restart()
@@ -132,6 +151,22 @@ public class GameController : MonoBehaviour {
         oPlayerScore = 0;
         xPlayersScoreText.text = "0";
         oPlayersScoreText.text = "0";
+    }
+
+    public void switchPlayer(int whichPlayer)
+    {
+        if (whichPlayer == 0)
+        {
+            whoseTurn = 0;
+            turnIcons[0].SetActive(true);
+            turnIcons[1].SetActive(false);
+        }
+        else if (whichPlayer == 1)
+        {
+            whoseTurn = 1;
+            turnIcons[0].SetActive(false);
+            turnIcons[1].SetActive(true);
+        }
     }
 
     // Update is called once per frame
