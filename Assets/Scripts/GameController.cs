@@ -29,7 +29,7 @@ public class GameController : MonoBehaviour {
         }
         for (int i = 0; i < markedSpaces.Length; i++)
         {
-            markedSpaces[i] = -1;
+            markedSpaces[i] = -100;
         }
     }
 
@@ -37,8 +37,14 @@ public class GameController : MonoBehaviour {
         tictactoeSpaces[whichNumber].image.sprite = playerIcons[whoseTurn];
         tictactoeSpaces[whichNumber].interactable = false;
 
-        markedSpaces[whichNumber] = whoseTurn;
+        //Ustawiamy o jeden więcej aby poprawić logikę sprawdzania wygranego
+        markedSpaces[whichNumber] = whoseTurn+1;
         turnCounter++;
+
+        if (turnCounter > 4)
+        {
+            WinnerCheck();
+        }
 
         if (whoseTurn == 0) {
             whoseTurn = 1;
@@ -49,6 +55,33 @@ public class GameController : MonoBehaviour {
             whoseTurn = 0;
             turnIcons[0].SetActive(true);
             turnIcons[1].SetActive(false);
+        }
+    }
+
+    void WinnerCheck() {
+        /*
+         * Sprawdzanie czy ktoś wygrał. Polega na tym, że po kliknięciu w pole, w tablicę markedSpraces zostaje wpisana liczba 1 lub 2 w zależności od gracza.
+         * jeżeli gra się skończyła, to któraś z poniższych zmiennych będzie wynosiła 3 lub 6. Dlaczego? Ponieważ w marked space zapisaliśmy id użytkownika, 
+         * a do wygrania potrzebujemy 3 pól, więc 3 * 1 = 3, a 3*2 = 6.
+         */
+        int s1 = markedSpaces[0] + markedSpaces[1] + markedSpaces[3];
+        int s2 = markedSpaces[3] + markedSpaces[4] + markedSpaces[5];
+        int s3 = markedSpaces[6] + markedSpaces[7] + markedSpaces[8];
+        int s4 = markedSpaces[0] + markedSpaces[3] + markedSpaces[6];
+        int s5 = markedSpaces[1] + markedSpaces[4] + markedSpaces[7];
+        int s6 = markedSpaces[2] + markedSpaces[5] + markedSpaces[8];
+        int s7 = markedSpaces[0] + markedSpaces[4] + markedSpaces[8];
+        int s8 = markedSpaces[1] + markedSpaces[4] + markedSpaces[6];
+
+        //Dodanie zmiennych do tablicy w celu sprawdzenia pętlą
+        var solutions = new int[] { s1, s2, s3, s4, s5, s6, s7, s8 };
+        for (int i = 0; i < solutions.Length; i++)
+        {
+            //Sprawdzenie czy ktoś wygrał
+            if (solutions[i] == 3 * (whoseTurn + 1))
+            {
+
+            }
         }
     }
 
