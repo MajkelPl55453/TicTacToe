@@ -5,10 +5,10 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
 
-    public int whoTurn; // 0 = X; 1 = O;
+    public int whoseTurn; // 0 = X; 1 = O;
     public int turnCounter; // zlicza liczbę tur
     public GameObject[] turnIcons; // wyświetla czyja tura
-    public Sprite[] playerIcons; //0 = X; 1 = Y;
+    public Sprite[] playerIcons; //0 = X; 1 = O;
     public Button[] tictactoeSpaces; //klikalne pola w grze
 
 
@@ -18,7 +18,7 @@ public class GameController : MonoBehaviour {
 	}
 
     void GameSetup() {
-        whoTurn = 0;
+        whoseTurn = 0;
         turnCounter = 0;
         turnIcons[0].SetActive(true);
         turnIcons[1].SetActive(false);
@@ -26,6 +26,22 @@ public class GameController : MonoBehaviour {
         {
             tictactoeSpaces[i].interactable = true;
             tictactoeSpaces[i].GetComponent<Image>().sprite = null;
+        }
+    }
+
+    public void TicTacToeButton(int whichNumber){
+        tictactoeSpaces[whichNumber].image.sprite = playerIcons[whoseTurn];
+        tictactoeSpaces[whichNumber].interactable = false;
+
+        if (whoseTurn == 0) {
+            whoseTurn = 1;
+            turnIcons[0].SetActive(false);
+            turnIcons[1].SetActive(true);
+        }
+        else {
+            whoseTurn = 0;
+            turnIcons[0].SetActive(true);
+            turnIcons[1].SetActive(false);
         }
     }
 
