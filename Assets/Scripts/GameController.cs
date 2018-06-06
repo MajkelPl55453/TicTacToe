@@ -23,6 +23,7 @@ public class GameController : MonoBehaviour {
     public Button xPlayersButton; // przycisk x
     public Button oPlayersButton; // przycisk o
     public int lastWinner; // id ostatniego zwyciężcy
+    public GameObject catImage; // obraz dla litery remisu
 
     // Use this for initialization
     void Start () {
@@ -57,7 +58,11 @@ public class GameController : MonoBehaviour {
 
         if (turnCounter > 4)
         {
-            WinnerCheck();
+            bool isWinner = WinnerCheck();
+            if (turnCounter == 9 && isWinner == false)
+            {
+                Cat();
+            }
         }
 
         if (whoseTurn == 0) {
@@ -72,7 +77,7 @@ public class GameController : MonoBehaviour {
         }
     }
 
-    void WinnerCheck() {
+    bool WinnerCheck() {
         /*
          * Sprawdzanie czy ktoś wygrał. Polega na tym, że po kliknięciu w pole, w tablicę markedSpraces zostaje wpisana liczba 1 lub 2 w zależności od gracza.
          * jeżeli gra się skończyła, to któraś z poniższych zmiennych będzie wynosiła 3 lub 6. Dlaczego? Ponieważ w marked space zapisaliśmy id użytkownika, 
@@ -95,9 +100,10 @@ public class GameController : MonoBehaviour {
             if (solutions[i] == 3 * (whoseTurn + 1))
             {
                 WinnderDisplay(i);
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     void WinnderDisplay(int indexIn) {
@@ -133,6 +139,7 @@ public class GameController : MonoBehaviour {
         rematchButton.SetActive(false);
         xPlayersButton.interactable = true;
         oPlayersButton.interactable = true;
+        catImage.SetActive(false);
 
         if (lastWinner == 0)
         {
@@ -167,6 +174,15 @@ public class GameController : MonoBehaviour {
             turnIcons[0].SetActive(false);
             turnIcons[1].SetActive(true);
         }
+    }
+
+    void Cat()
+    {
+        lastWinner = whoseTurn;
+        winnerPanel.SetActive(true);
+        catImage.SetActive(true);
+        winnerText.text = "Remis!";
+        rematchButton.SetActive(true);
     }
 
     // Update is called once per frame
