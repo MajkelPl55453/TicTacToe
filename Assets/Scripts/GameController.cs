@@ -14,21 +14,21 @@ public class GameController : MonoBehaviour {
     public Text winnerText; // Trzyma komponent tekstu dla wygranego gracza
     public GameObject[] winningLines; // przetrzymuje linie dla wygrania
     public GameObject winnerPanel; // panel zabezpieczający przed klikaniem przysików po wygraniu
-    public int xPlayerScore;
-    public int oPlayerScore;
-    public Text xPlayersScoreText;
-    public Text oPlayersScoreText;
+    public int xPlayerScore; // punkty dla gracza x
+    public int oPlayerScore; // punkty dla gracza o
+    public Text xPlayersScoreText; // pole tekstowe z punktami dla gracza x
+    public Text oPlayersScoreText; // pole tekstowe z punktami dla gracza o
+    public GameObject rematchButton; // przycisk od ponownej rozgrywki gry
+    public GameObject restartButton; // przycisk od restartu gry
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         GameSetup();
 	}
 
     void GameSetup() {
         whoseTurn = 0;
         turnCounter = 0;
-        xPlayerScore = 0;
-        oPlayerScore = 0;
         turnIcons[0].SetActive(true);
         turnIcons[1].SetActive(false);
         for (int i = 0; i < tictactoeSpaces.Length; i++)
@@ -111,10 +111,31 @@ public class GameController : MonoBehaviour {
             winnerText.text = "Gracz O wygrał";
         }
         winningLines[indexIn].SetActive(true);
+        rematchButton.SetActive(true);
     }
 
-	// Update is called once per frame
-	void Update () {
+    public void Rematch()
+    {
+        GameSetup();
+        for (int i = 0; i < winningLines.Length; i++)
+        {
+            winningLines[i].SetActive(false);
+        }
+        winnerPanel.SetActive(false);
+        rematchButton.SetActive(false);
+    }
+
+    public void Restart()
+    {
+        Rematch();
+        xPlayerScore = 0;
+        oPlayerScore = 0;
+        xPlayersScoreText.text = "0";
+        oPlayersScoreText.text = "0";
+    }
+
+    // Update is called once per frame
+    void Update () {
 		
 	}
 }
