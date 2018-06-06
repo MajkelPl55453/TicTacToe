@@ -1,10 +1,37 @@
-﻿using System.Collections;
+﻿using Assets.Scripts;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameController : MonoBehaviour {
-
+/// <summary>
+/// Jest to główna klasa, która steruję całą grą oraz jej wszystkimi funkcjonalnościami.
+/// <param name="whoseTurn">Określa, który gracz obecnie ma prawo do wykonania ruchu. Zero oznacza, że ruch wykonuje gracz "X". Jeden oznacza, że ruch wykonuje gracz "O"</param>
+/// <param name="turnCounter">Oblicza ile tur zostało wykonanych.</param>
+/// <param name="turnIcons">Tablica zawierająca dwa obiekty typu GameObject. Każdy z tych obiektów posiada ikonę oznaczającą, która zostanie wyświetlona nad graczem gdy będzie wykonywał swój ruch.</param>
+/// <param name="playerIcons">Tablica zawierająca dwa obiekty typu Sprite. Każdy z tych obiektów posiada ikonę gracza.</param>
+/// <param name="tictactoeSpaces">Tablica zawiera obiekty typu Button. Są to pola, na których gracz może ustawić swój znacznik.</param>
+/// <param name="markedSpaces">Tablica wartości typu int. Elementy tablicy mają klucze typu int od 0 do 8. Każdy element tablicy odpowiada jednemu polu w grze. Po kliknięciu i ustawieniu znacznika w danym elemencie tablicy zapisany zostaje identyfikator użytkownika.</param>
+/// <param name="winnerText">Przetrzymuje odwołanie do obiektu typu Text. Dzięki temu, po zakończeniu rozgrywki, można zmienić tekst dla wygranego gracza oraz nie trzeba tworzyć 3 różnych obiektów aby obsłużyć każdy przypadek rostrzygnięcia rozgrywki.</param>
+/// <param name="winningLines">Tablica obiektów typu GameObject. Każdy z 8 obiektów odpowiada jednej linii która może pokazać się po wygraniu rozgrywki. Posiada 3 linie poziome, 3 linie pionowe oraz 2 linie tworzące krzyż.</param>
+/// <param name="winnerPanel">Jest to obiekt typu GameObject. Przetrzymuje odwołanie do panelu, który wyświetli się po wygraniu rozgrywki. Zabezpiecza to przed możliwością wyboru pola po zakończeniu rozgrywki.</param>
+/// <param name="xPlayerScore">Zmienna typu int. Przetrzymuje punkty gracza "X"</param>
+/// <param name="oPlayerScore">Zmienna typu int. Przetrzymuje punkty gracza "O"</param>
+/// <param name="xPlayersScoreText">Zmienna typu Text. Zawiera dane obiektu wyświetlającego wynik dla gracza "X"</param>
+/// <param name="oPlayersScoreText">Zmienna typu Text. Zawiera dane obiektu wyświetlającego wynik dla gracza "O"</param>
+/// <param name="rematchButton">Zmienna typu Button. Po wciśnięciu przypisanego przycisku uruchomi się przypisana do niego akcja. W naszym przypadku rozpocznie się kolejna runda rozgrywki.</param>
+/// <param name="restartButton">Zmienna typu Button. Po wciśnięciu przypisanego przycisku uruchomi się przypisana do niego akcja. W naszym przypadku rozpocznie się nowa rozgrywka. </param>
+/// <param name="xPlayersButton">Zmienna typu Button. Po wciśnięciu przypisanego przycisku uruchomi się przypisana do niego akcja. W naszym przypadku zostanie wybrany gracz "X", który rozpocznie rozgrywkę.</param>
+/// <param name="oPlayersButton">Zmienna typu Button. Po wciśnięciu przypisanego przycisku uruchomi się przypisana do niego akcja. W naszym przypadku zostanie wybrany gracz "O", który rozpocznie rozgrywkę.</param>
+/// <param name="lastWinner">Zmienna typu int. Przechowuje id gracza, który wygrał ostatnią rozgrywkę. Używana jest do wyboru graczak, który ma rozpocząć kolejną rundę.</param>
+/// <param name="catImage">Zmienna typu GameObject. Przechowuje odwołanie do obrazu wyświetlającego informację o remisie.</param>
+/// <param name="buttonClickAudio">Zmienna typu AudioSource. Przechowuje ścieżkę dzwiękową, która zawiera dzwięk kliknięcia myszką.</param>
+/// <param name="winAudio">Zmienna typu AudioSource. Przechowuje ścieżkę dzwiękową, która zawiera dzwięk odpowiedni dla wygrania rozgrywki.</param>
+/// <param name="drawAudio">Zmienna typu AudioSource. Przechowuje ścieżkę dzwiękową, która zawiera dzwięk odpowiedni dla zremisowania rozgrywki.</param>
+/// </summary>
+public class GameController : MonoBehaviour
+{
+    public LogicController logicController;
     public int whoseTurn; // 0 = X; 1 = O;
     public int turnCounter; // zlicza liczbę tur
     public GameObject[] turnIcons; // wyświetla czyja tura
@@ -18,8 +45,8 @@ public class GameController : MonoBehaviour {
     public int oPlayerScore; // punkty dla gracza o
     public Text xPlayersScoreText; // pole tekstowe z punktami dla gracza x
     public Text oPlayersScoreText; // pole tekstowe z punktami dla gracza o
-    public GameObject rematchButton; // przycisk od ponownej rozgrywki gry
-    public GameObject restartButton; // przycisk od restartu gry
+    public Button rematchButton; // przycisk od ponownej rozgrywki gry
+    public Button restartButton; // przycisk od restartu gry
     public Button xPlayersButton; // przycisk x
     public Button oPlayersButton; // przycisk o
     public int lastWinner; // id ostatniego zwyciężcy
@@ -28,12 +55,20 @@ public class GameController : MonoBehaviour {
     public AudioSource winAudio; // dzwięk podczas wygrania
     public AudioSource drawAudio; // dzwięk podczas remisu
 
-    // Use this for initialization
-    void Start () {
+    /// <summary>
+    /// Inicjalizacja gry. Wywołuje metodę ustawiającą podstawowe dane gry.
+    /// </summary>
+    void Start()
+    {
+        logicController = new LogicController();
         GameSetup();
-	}
+    }
 
-    void GameSetup() {
+    /// <summary>
+    /// Inicjalizacja danych gry, ustawienie podstawowych danych gry.
+    /// </summary>
+    void GameSetup()
+    {
         whoseTurn = 0;
         turnCounter = 0;
         turnIcons[0].SetActive(true);
@@ -49,67 +84,67 @@ public class GameController : MonoBehaviour {
         }
     }
 
-    public void TicTacToeButton(int whichNumber){
+    /// <summary>
+    /// Metoda wywoływana po ustawieniu kółka lub krzyżyka na planszy.
+    /// </summary>
+    /// <param name="whichNumber">Zmienna typu int. Przekazuje id wciśniętego przycisku.</param>
+    public void TicTacToeButton(int whichNumber)
+    {
+        bool isWinner = false;
         xPlayersButton.interactable = false;
         oPlayersButton.interactable = false;
         tictactoeSpaces[whichNumber].image.sprite = playerIcons[whoseTurn];
         tictactoeSpaces[whichNumber].interactable = false;
 
         //Ustawiamy o jeden więcej aby poprawić logikę sprawdzania wygranego
-        markedSpaces[whichNumber] = whoseTurn+1;
+        markedSpaces[whichNumber] = whoseTurn + 1;
         turnCounter++;
 
         if (turnCounter > 4)
         {
-            bool isWinner = WinnerCheck();
-            if (turnCounter == 9 && isWinner == false)
+            int winnerCheck = logicController.WinnerCheck(markedSpaces, whoseTurn);
+            if (winnerCheck >= 0)
             {
-                Cat();
+                isWinner = true;
+                WinnderDisplay(winnerCheck);
+            }
+            else
+            {
+                isWinner = false;
             }
         }
 
-        if (whoseTurn == 0) {
+        if (whoseTurn == 0)
+        {
             whoseTurn = 1;
             turnIcons[0].SetActive(false);
             turnIcons[1].SetActive(true);
         }
-        else {
+        else
+        {
             whoseTurn = 0;
             turnIcons[0].SetActive(true);
             turnIcons[1].SetActive(false);
         }
-    }
 
-    bool WinnerCheck() {
-        /*
-         * Sprawdzanie czy ktoś wygrał. Polega na tym, że po kliknięciu w pole, w tablicę markedSpraces zostaje wpisana liczba 1 lub 2 w zależności od gracza.
-         * jeżeli gra się skończyła, to któraś z poniższych zmiennych będzie wynosiła 3 lub 6. Dlaczego? Ponieważ w marked space zapisaliśmy id użytkownika, 
-         * a do wygrania potrzebujemy 3 pól, więc 3 * 1 = 3, a 3*2 = 6.
-         */
-        int s1 = markedSpaces[0] + markedSpaces[1] + markedSpaces[2];
-        int s2 = markedSpaces[3] + markedSpaces[4] + markedSpaces[5];
-        int s3 = markedSpaces[6] + markedSpaces[7] + markedSpaces[8];
-        int s4 = markedSpaces[0] + markedSpaces[3] + markedSpaces[6];
-        int s5 = markedSpaces[1] + markedSpaces[4] + markedSpaces[7];
-        int s6 = markedSpaces[2] + markedSpaces[5] + markedSpaces[8];
-        int s7 = markedSpaces[0] + markedSpaces[4] + markedSpaces[8];
-        int s8 = markedSpaces[2] + markedSpaces[4] + markedSpaces[6];
-
-        //Dodanie zmiennych do tablicy w celu sprawdzenia pętlą
-        var solutions = new int[] { s1, s2, s3, s4, s5, s6, s7, s8 };
-        for (int i = 0; i < solutions.Length; i++)
+        if (turnCounter == 9 && isWinner == false)
         {
-            //Sprawdzenie czy ktoś wygrał
-            if (solutions[i] == 3 * (whoseTurn + 1))
-            {
-                WinnderDisplay(i);
-                return true;
-            }
+            Cat();
         }
-        return false;
+        else if (isWinner == true)
+        {
+            turnIcons[0].SetActive(false);
+            turnIcons[1].SetActive(false);
+        }
     }
+    
 
-    void WinnderDisplay(int indexIn) {
+    /// <summary>
+    /// Metoda odpowiedzialna za wyświetlenie informacji o wygranym graczu.
+    /// </summary>
+    /// <param name="indexIn"></param>
+    void WinnderDisplay(int indexIn)
+    {
         lastWinner = whoseTurn;
         winnerPanel.gameObject.SetActive(true);
         winnerText.gameObject.SetActive(true);
@@ -118,20 +153,24 @@ public class GameController : MonoBehaviour {
             xPlayerScore++;
             xPlayersScoreText.text = xPlayerScore.ToString();
             winnerText.text = "Gracz X wygrał!";
-            switchPlayer(1);
         }
-        else if(whoseTurn == 1)
+        else if (whoseTurn == 1)
         {
             oPlayerScore++;
             oPlayersScoreText.text = oPlayerScore.ToString();
             winnerText.text = "Gracz O wygrał";
-            switchPlayer(0);
         }
         winningLines[indexIn].SetActive(true);
-        rematchButton.SetActive(true);
+        rematchButton.interactable = true;
         winAudio.Play();
+
+        turnIcons[0].SetActive(false);
+        turnIcons[1].SetActive(false);
     }
 
+    /// <summary>
+    /// Metoda wywoływana po wciśnięciu przycisku odpowiedzialnego za uruchomienie kolejnej rundy.
+    /// </summary>
     public void Rematch()
     {
         GameSetup();
@@ -140,21 +179,17 @@ public class GameController : MonoBehaviour {
             winningLines[i].SetActive(false);
         }
         winnerPanel.SetActive(false);
-        rematchButton.SetActive(false);
+        rematchButton.interactable = false;
         xPlayersButton.interactable = true;
         oPlayersButton.interactable = true;
         catImage.SetActive(false);
 
-        if (lastWinner == 0)
-        {
-            switchPlayer(1);
-        }
-        else if (lastWinner == 1)
-        {
-            switchPlayer(0);
-        }
+        switchPlayer(logicController.WhoWillStartNextRound(lastWinner));
     }
 
+    /// <summary>
+    /// Metoda wywoływana po wciśnięciu przycisku odpowiedzialnego za uruchomienie nowej rozgrywki.
+    /// </summary>
     public void Restart()
     {
         Rematch();
@@ -164,6 +199,10 @@ public class GameController : MonoBehaviour {
         oPlayersScoreText.text = "0";
     }
 
+    /// <summary>
+    /// Metoda odpowiedzialna za przełączenie gracza.
+    /// </summary>
+    /// <param name="whichPlayer">Przechowuje id gracza, który ma mieć możliwość ruchu.</param>
     public void switchPlayer(int whichPlayer)
     {
         if (whichPlayer == 0)
@@ -180,23 +219,58 @@ public class GameController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Metoda wywoływana w momencie, gdy gracze zremisują
+    /// </summary>
     void Cat()
     {
+        turnIcons[0].SetActive(false);
+        turnIcons[1].SetActive(false);
         lastWinner = whoseTurn;
         winnerPanel.SetActive(true);
         catImage.SetActive(true);
         winnerText.text = "Remis!";
-        rematchButton.SetActive(true);
+        rematchButton.interactable = true;
         drawAudio.Play();
     }
 
+    /// <summary>
+    /// Metoda odpowiedzialna za odtworzenie dzwięku kliknięcia przycisku
+    /// </summary>
     public void PlayButtonClick()
     {
         buttonClickAudio.Play();
     }
 
-    // Update is called once per frame
-    void Update () {
-		
-	}
+    /// <summary>
+    /// Metoda odpowiedzialna za wyświetlanie tymczasowego znacznika na przycisku na który gracz najechał kursorem
+    /// </summary>
+    /// <param name="whichNumber">Zmienna typu int. Przechowuje id pola w którym ma zostać wyświetlony placeholder</param>
+    public void OnPointerEnter(int whichNumber)
+    {
+        if (tictactoeSpaces[whichNumber].interactable)
+        {
+            tictactoeSpaces[whichNumber].image.sprite = playerIcons[whoseTurn];
+        }
+    }
+
+    /// <summary>
+    /// Metoda odpowiedzialna za usunięcie tymczasowego znacznika na przycisku, z którego gracz zjechał kursorem
+    /// </summary>
+    /// <param name="whichNumber">Zmienna typu int. Przechowuje id pola w którym ma zostać usunięty placeholder</param>
+    public void OnPointerExit(int whichNumber)
+    {
+        if (tictactoeSpaces[whichNumber].interactable)
+        {
+            tictactoeSpaces[whichNumber].image.sprite = null;
+        }
+    }
+
+    /// <summary>
+    /// Metoda uruchamiana jest w każdej klatce działania programu
+    /// </summary>
+    void Update()
+    {
+
+    }
 }

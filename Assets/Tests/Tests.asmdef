@@ -1,0 +1,14 @@
+{
+    "name": "Tests",
+    "references": [
+        "LoginController"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true
+}
