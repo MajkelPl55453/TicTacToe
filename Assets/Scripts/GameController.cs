@@ -10,7 +10,7 @@ public class GameController : MonoBehaviour {
     public GameObject[] turnIcons; // wyświetla czyja tura
     public Sprite[] playerIcons; //0 = X; 1 = O;
     public Button[] tictactoeSpaces; //klikalne pola w grze
-
+    public int[] markedSpaces; // id pól klikniętych przez konkretnego gracza
 
 	// Use this for initialization
 	void Start () {
@@ -27,11 +27,18 @@ public class GameController : MonoBehaviour {
             tictactoeSpaces[i].interactable = true;
             tictactoeSpaces[i].GetComponent<Image>().sprite = null;
         }
+        for (int i = 0; i < markedSpaces.Length; i++)
+        {
+            markedSpaces[i] = -1;
+        }
     }
 
     public void TicTacToeButton(int whichNumber){
         tictactoeSpaces[whichNumber].image.sprite = playerIcons[whoseTurn];
         tictactoeSpaces[whichNumber].interactable = false;
+
+        markedSpaces[whichNumber] = whoseTurn;
+        turnCounter++;
 
         if (whoseTurn == 0) {
             whoseTurn = 1;
