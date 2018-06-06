@@ -24,6 +24,9 @@ public class GameController : MonoBehaviour {
     public Button oPlayersButton; // przycisk o
     public int lastWinner; // id ostatniego zwyciężcy
     public GameObject catImage; // obraz dla litery remisu
+    public AudioSource buttonClickAudio; // przetrzymuje dzwięk klinięcia
+    public AudioSource winAudio; // dzwięk podczas wygrania
+    public AudioSource drawAudio; // dzwięk podczas remisu
 
     // Use this for initialization
     void Start () {
@@ -126,6 +129,7 @@ public class GameController : MonoBehaviour {
         }
         winningLines[indexIn].SetActive(true);
         rematchButton.SetActive(true);
+        winAudio.Play();
     }
 
     public void Rematch()
@@ -183,6 +187,12 @@ public class GameController : MonoBehaviour {
         catImage.SetActive(true);
         winnerText.text = "Remis!";
         rematchButton.SetActive(true);
+        drawAudio.Play();
+    }
+
+    public void PlayButtonClick()
+    {
+        buttonClickAudio.Play();
     }
 
     // Update is called once per frame
